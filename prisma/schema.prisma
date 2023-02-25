@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vendor {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  menuItems MenuItems[]
+}
+
+model MenuItems {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  price       Int
+  imgUrl      String
+
+  Vendor   Vendor @relation(fields: [vendorId], references: [id])
+  vendorId String
+
+  Cart       Cart[]
+  OrderItems OrderItems?
+}
+
+model Cart {
+  id         String @id @default(uuid())
+  quantity   Int
+  totalPrice Int
+
+  menuItems   MenuItems @relation(fields: [menuItemsId], references: [id])
+  menuItemsId String    @unique
+
+  Customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+}
+
+model Customer {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  Orders Orders[]
+  Cart   Cart[]
+}
+
+enum STATUS {
+  PENDING
+  COMPLETED
+}
+
+model Orders {
+  id         String @id @default(uuid())
+  status     STATUS
+  totalPrice Int
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  OrderItems OrderItems[]
+}
+
+model OrderItems {
+  id         String @id @default(uuid())
+  quantity   Int
+  totalPrice Int
+
+  menuItems   MenuItems @relation(fields: [menuItemsId], references: [id])
+  menuItemsId String    @unique
+
+  Orders  Orders @relation(fields: [orderId], references: [id])
+  orderId String
+}

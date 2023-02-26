@@ -99,7 +99,7 @@ router.post("/login", async (req: Request, res: Response) => {
   });
 });
 
-router.post("/create-menu", checkAuth, async (req: Request, res: Response) => {
+router.post("/create-menu",checkAuth, async (req: Request, res: Response) => {
   const { name, description, price, imgUrl } = req.body;
   const vendorId = req.body.user.id;
   if (!name || !description || !price || !imgUrl) {
